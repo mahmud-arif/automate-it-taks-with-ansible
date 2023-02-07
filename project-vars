@@ -1,0 +1,7 @@
+location: /Users/nanajanashia/Demo-projects/Bootcamp/nodejs-app 
+user_home_dir: /home/ubuntu
+container_name: 9c127912690c
+
+
+# docker exec -it 9c127912690c KUBECTL_VERSION=$(cat stable.txt)
+

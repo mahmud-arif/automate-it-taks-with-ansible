@@ -1,0 +1,26 @@
+---
+- name: Copy file to EC2 instance
+  hosts: ec2_server
+  tasks:
+    - name: Create folder in Docker container
+      command: "docker exec 3705554778c2 mkdir /var/jenkins_home/.kube"
+      register: result
+      check_mode: only
+    - name: Check for success
+      assert:
+        that: result.rc == 0
+    - name: Copy file to EC2
+      copy:
+        src: /path/to/local/file
+        dest: /tmp/file
+      delegate_to: localhost
+      register: copy_result
+    - name: Ensure file was copied to EC2
+      assert:
+        that: copy_result.changed == True
+    - name: Copy file to container
+      command: "docker cp /tmp/file <container_name>:<destination_path>"
+    - name: Remove file from EC2
+      file:
+        path: /tmp/file
+        state: absent

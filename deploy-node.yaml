@@ -1,0 +1,36 @@
+---
+- name: Install node and npm
+  hosts: ec2_server
+  become: true
+  become_method: sudo
+  tasks: 
+    - name: Update app repo and cache 
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: Install nodejs and npm
+      apt: 
+       pkg:
+        - nodejs
+        - npm 
+- name: Deploy nodejs
+  hosts: ec2_server
+  vars_files:
+    - project-vars
+  tasks: 
+    - name: unpack the nodejs app
+      unarchive:
+        src:  {{location}} 
+        dest: {{user_home_dir}}
+    - name: install dependency
+      npm:
+        path: "{{user_home_dir}}/package"
+    - name: Start the application
+      command:
+        chdir: "{{user_home_dir}}package/app"
+        cmd: node server
+      async: 1000
+      poll: 0
+    - name: Ensure app is running 
+      shell: ps aux | grep node
+      register: status_app
+    - debug: msg={{status_app.stdout_lines}}
+

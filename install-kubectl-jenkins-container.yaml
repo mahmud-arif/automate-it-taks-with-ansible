@@ -1,0 +1,30 @@
+---
+- name: Install kubectl in Docker container on EC2
+  hosts: droplet 
+  # gather_facts: no
+  vars_files:
+     - project-vars
+  tasks:
+    - name: Update the package cache in the Docker container
+      shell: |
+        docker exec -it {{container_name}} apt-get update
+
+    - name: Install necessary packages in the Docker container
+      shell: |
+        docker exec -it {{container_name}} apt-get install -y apt-transport-https curl
+
+    - name: Install kubectl binary in the Docker container
+      shell: |
+        docker exec -it {{container_name}} curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+
+    - name: Make kubectl executable in the Docker container
+      shell: |
+        docker exec -it {{container_name}} chmod +x kubectl
+
+    - name: Move kubectl to PATH in the Docker container
+      shell: |
+        docker exec -it {{container_name}} mv kubectl /usr/local/bin/
+
+    - name: Verify kubectl installation in the Docker container
+      shell: |
+        docker exec -it {{container_name}} kubectl version

@@ -1,0 +1,14 @@
+[droplet]
+ec2-3-249-121-49.eu-west-1.compute.amazonaws.com ansible_python_interpreter=/usr/bin/python3
+
+[droplet:vars]
+ansible_ssh_private_key_file=~/.ssh/id_rsa 
+ansible_user=ubuntu 
+
+
+[ec2]
+ec2.amazon.com ansible_python_interpreter=/usr/bin/python3
+
+[ec2:vars]
+ansible_ssh_private_key_file=~/downloads/abc.pem
+ansible_user=ec2-user

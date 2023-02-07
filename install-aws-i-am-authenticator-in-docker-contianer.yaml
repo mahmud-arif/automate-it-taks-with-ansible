@@ -1,0 +1,27 @@
+---
+- name: Install aws-iam-authenticator in Docker container on EC2
+  hosts: droplet
+  # gather_facts: no
+  vars_files:
+     - project-vars
+  tasks:
+    - name: Update the package cache in the Docker container
+      shell: |
+        docker exec -it {{container_name}} apt-get update
+
+    - name: Download aws-iam-authenticator binary in the Docker container
+      shell: |
+        docker exec -it {{container_name}} curl -Lo aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
+
+
+    - name: Make aws-iam-authenticator binary executable in the Docker container
+      shell: |
+        docker exec -it {{container_name}} chmod +x aws-iam-authenticator
+
+    - name: Move aws-iam-authenticator to PATH in the Docker container
+      shell: |
+        docker exec -it {{container_name}} mv aws-iam-authenticator /usr/local/bin/
+
+    - name: Verify aws-iam-authenticator installation in the Docker container
+      shell: |
+        docker exec -it {{container_name}} aws-iam-authenticator version
